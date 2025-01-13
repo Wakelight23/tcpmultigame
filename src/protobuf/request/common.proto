@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package commonPacket;
+
+message CommonPacket {
+  uint32 handlerId = 1; // 핸들러 ID
+  string userId = 2;    // 사용자 ID
+  string version = 3;   // 클라이언트 버전
+  bytes payload = 4;    // 페이로드 (직렬화된 데이터)
+}
+
+message Ping {
+  int64 timestamp = 1;
+}
