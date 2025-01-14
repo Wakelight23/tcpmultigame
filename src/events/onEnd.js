@@ -9,5 +9,9 @@ export const onEnd = (socket) => () => {
   console.log(gameSessions);
 
   removeUser(socket);
+
   removeGameSession(socket);
+
+  console.log('삭제 후 userSessions \n', userSessions);
+  console.log('삭제 후 gameSessions \n', gameSessions);
 };

@@ -32,10 +32,10 @@ class IntervalManager extends BaseManager {
   }
 
   removePlayer(playerId) {
-    if (this.invervals.has(playerId)) {
-      const userIntervals = this.invervals.get(playerId);
+    if (this.intervals.has(playerId)) {
+      const userIntervals = this.intervals.get(playerId);
       userIntervals.forEach((intervalId) => clearInverval(intervalId));
-      this.invervals.delete(playerId);
+      this.intervals.delete(playerId);
     }
   }
 

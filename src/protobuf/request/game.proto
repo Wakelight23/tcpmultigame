@@ -3,8 +3,9 @@ syntax = "proto3";
 package game;
 
 message LocationUpdatePayload {
-  float x = 1; // X 좌표
-  float y = 2; // Y 좌표
+  string gameId = 1; // game 세션의 ID
+  float x = 2; // X 좌표
+  float y = 3; // Y 좌표
 }
 
 message LocationUpdate {

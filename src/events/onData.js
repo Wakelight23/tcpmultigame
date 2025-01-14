@@ -6,6 +6,7 @@ import { getUserBySocket } from '../session/user.session.js';
 import CustomError from '../utils/error/customError.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
+import gameExitHandler from '../handlers/game/gameExit.handler.js';
 
 export const onData = (socket) => async (data) => {
   // 기존 버퍼에 새로 수신된 데이터를 추가
@@ -30,18 +31,21 @@ export const onData = (socket) => async (data) => {
         // 공통 패킷 구조를 파싱
         const { handlerId, userId, payload } = packetParser(packet);
 
+        console.log('Decoded Packet:', { handlerId, userId, payload });
+
         switch (packetType) {
           case PACKET_TYPE.NORMAL: {
             const handler = getHandlerById(handlerId);
+            console.log('handler 뭐가 나오니? ', handler);
             if (!handler) {
               throw new CustomError(ErrorCodes.UNKNOWN_HANDLER_ID, '알 수 없는 핸들러 ID입니다.');
             }
 
             // 유저 세션 확인
-            const user = getUserBySocket(socket);
-            if (!user) {
-              throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-            }
+            // const user = getUserBySocket(socket);
+            // if (!user) {
+            //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+            // }
 
             // 핸들러 호출
             await handler({
@@ -66,6 +70,11 @@ export const onData = (socket) => async (data) => {
           case PACKET_TYPE.GAME_START: {
             console.log('Game Start received');
             // 게임 시작 처리 로직 추가 가능
+            break;
+          }
+          case PACKET_TYPE.EXIT: {
+            console.log('클라이언트 접속 종료');
+            gameExitHandler({ socket, userId });
             break;
           }
 

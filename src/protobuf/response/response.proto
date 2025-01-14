@@ -2,9 +2,16 @@ syntax = 'proto3';
 
 package response;
 
+// 클라이언트에서 요청하면 보내주는 Response
 message Response {
   uint32 handlerId = 1;
   uint32 responsecode = 2;
   int64 timestamp = 3;
   bytes data = 4;
+}
+
+// 초기화 후 바로 보내줘야하는 Response
+message InitialResponse {
+  string userId = 1;   // 사용자 ID
+  string gameId = 2;   // 게임 세션 ID
 }

@@ -1,6 +1,6 @@
 import {
   createLocationPacket,
-  gameStartNotification,
+  // gameStartNotification,
 } from '../../utils/notification/game.notification.js';
 import IntervalManager from '../manager/interval.manager.js';
 
@@ -22,7 +22,7 @@ class Game {
     this.users.push(user);
 
     // 1초마다 ping 체크
-    this.intervalManager.addPlayer(user.id, user.ping.bind(user), 1000);
+    this.intervalManager.addPlayer(user, user.ping.bind(user), 1000);
     // 최대 인원수가 되면 게임 시작
     if (this.users.length === MAX_PALYERS) {
       setTimeout(() => {
@@ -37,7 +37,7 @@ class Game {
 
   removeUser(userId) {
     this.users = this.users.filter((user) => user.id !== userId);
-    this.intervalManager.removePlayer(userId);
+    // this.intervalManager.removePlayer(userId);
 
     // 게임 플레이 도중에 유저가 나갔다면 state 상태를 waiting으로 변경
     if (this.users.length < MAX_PALYERS) {
@@ -55,15 +55,15 @@ class Game {
     return maxLatency;
   }
 
-  startGame() {
-    this.state = 'inProgress'; // 이 메서드가 호출되서 게임이 시작되었다면
-    const startPacket = gameStartNotification(this.id, Date.now());
-    console.log(this.getMaxLatancy());
+  // startGame() {
+  //   this.state = 'inProgress'; // 이 메서드가 호출되서 게임이 시작되었다면
+  //   // const startPacket = gameStartNotification(this.id, Date.now());
+  //   console.log(this.getMaxLatancy());
 
-    this.users.forEach((user) => {
-      user.socket.write(startPacket);
-    });
-  }
+  //   this.users.forEach((user) => {
+  //     user.socket.write(startPacket);
+  //   });
+  // }
 
   getAllLocation() {
     const maxLatancy = this.getMaxLatancy();

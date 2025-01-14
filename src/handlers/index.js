@@ -5,6 +5,7 @@ import { ErrorCodes } from '../utils/error/errorCodes.js';
 import createGameHandler from './game/createGame.handler.js';
 import joinGameHandler from './game/joinGame.handler.js';
 import updateLocationHandler from './game/updateLocation.handler.js';
+import gameExitHandler from './game/gameExit.handler.js';
 
 const handlers = {
   [HANDLER_IDS.INITIAL]: {
@@ -23,6 +24,10 @@ const handlers = {
     handler: updateLocationHandler,
     protoType: 'game.LocationUpdatePayload',
   },
+  [HANDLER_IDS.GAME_EXIT]: {
+    handler: gameExitHandler,
+    protoType: 'common.CommonPacket',
+  },
 };
 
 export const getHandlerById = (handlerId) => {
@@ -32,6 +37,7 @@ export const getHandlerById = (handlerId) => {
       `핸들러를 찾을 수 없습니다: ID ${handlerId}`,
     );
   }
+  console.log('어떤 handlerId를 받고 있나? : ', handlerId);
   return handlers[handlerId].handler;
 };
 

@@ -10,9 +10,14 @@ export const packetNames = {
     CreateGamePayload: 'game.CreateGamePayload',
     JoinGamePayload: 'game.JoinGamePayload',
     LocationUpdatePayload: 'game.LocationUpdatePayload', // game.proto의 LocationUpdatePayload 메시지
-    LocationUpdate: 'game.LocationUpdate',
   },
   response: {
+    InitialResponse: 'response.InitialResponse',
     Response: 'response.Response', // response.proto의 Response 메시지
+  },
+  gameNotification: {
+    // game.Notification.proto
+    LocationUpdate: 'gameNotification.LocationUpdate',
+    ExitPayload: 'gameNotification.ExitPayload',
   },
 };
