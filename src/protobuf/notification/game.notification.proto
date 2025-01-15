@@ -18,6 +18,11 @@ message LocationUpdate {
   }
 }
 
+message Start {
+  string gameId = 1;
+  int64 timestamp = 2;
+}
+
 message ExitPayload {
   string userId = 1; // 사용자 ID
 }

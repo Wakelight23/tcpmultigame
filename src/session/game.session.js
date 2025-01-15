@@ -17,11 +17,11 @@ export const removeGameSession = (id) => {
   }
 };
 
-export const getGameSeesion = (id) => {
+export const getGameSession = (id) => {
   return gameSessions.find((game) => game.id === id);
 };
 
-export const getAllGameSeesion = () => {
+export const getAllGameSession = () => {
   return gameSessions;
 };
 

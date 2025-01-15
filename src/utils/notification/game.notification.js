@@ -31,16 +31,16 @@ export const createLocationPacket = (users) => {
 };
 
 // 게임 시작 패킷
-// export const gameStartNotification = (gameId, timestamp) => {
-//   const protoMessage = getProtoMessages();
-//   const Start = protoMessage.gameNotification.Start;
+export const gameStartNotification = (gameId, timestamp) => {
+  const protoMessage = getProtoMessages();
+  const Start = protoMessage.gameNotification.Start;
 
-//   const payload = { gameId, timestamp };
-//   const message = Start.create(payload);
-//   const startPacket = Start.encode(message).finish();
+  const payload = { gameId, timestamp };
+  const message = Start.create(payload);
+  const startPacket = Start.encode(message).finish();
 
-//   return makeNotification(startPacket, PACKET_TYPE.GAME_START);
-// };
+  return makeNotification(startPacket, PACKET_TYPE.GAME_START);
+};
 
 export const createPingPacket = (timestamp) => {
   const protoMessages = getProtoMessages();

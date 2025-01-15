@@ -5,32 +5,25 @@ import { handleError } from '../../utils/error/errorHandler.js';
 import { createUser, findUserByDeviceId, updateUserLogin } from '../../db/user/user.db.js';
 import { getAvailableGameSession } from '../../session/game.session.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
+import CustomError from '../../utils/error/customError.js';
 
 const initialHandler = async ({ socket, userId, payload }) => {
   console.log('initialHandler 함수 들어왔다!');
   try {
-    let { deviceId } = payload;
+    const { deviceId } = payload;
 
-    // deviceId가 없을 경우 소켓 정보를 기반으로 생성
-    if (!deviceId || deviceId.trim() === '') {
-      console.log('Device ID가 누락되었습니다. 소켓 정보를 기반으로 Device ID 생성.');
-      deviceId = `${socket.remoteAddress}:${socket.remotePort}`;
-    }
-    // 이쪽 언저리에 DB에 입력한 deviceId를 추가하는 작업이 필요할듯 //
-
-    console.log(`Received Device ID: ${deviceId}`);
-
-    // 적합한 게임 세션 찾기
-    let gameSession = getAvailableGameSession();
-    if (!gameSession) {
-      throw new CustomError('No available game session found.');
+    const user = await findUserByDeviceId(payload.deviceId);
+    if (!user) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
 
-    // 데이터베이스에서 유저 조회
-    let user = await findUserByDeviceId(deviceId);
-    gameSession.addUser(user);
+    if (!user) {
+      user = await createUser(deviceId);
+    } else {
+      await updateUserLogin(user.id);
+    }
 
-    console.log(`User ${user} added to game session ${gameSession.id}`);
+    addUser(socket, user.id);
 
     // 유저가 없으면 새로 생성
     if (!user) {
@@ -50,7 +43,7 @@ const initialHandler = async ({ socket, userId, payload }) => {
 
     const initialResponseData = InitialResponse.create({
       userId: user.id,
-      gameId: gameSession.id,
+      // gameId: gameSession.id,
     });
 
     // 클라이언트에게 응답 전송

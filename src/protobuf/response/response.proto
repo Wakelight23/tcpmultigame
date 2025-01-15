@@ -5,7 +5,7 @@ package response;
 // 클라이언트에서 요청하면 보내주는 Response
 message Response {
   uint32 handlerId = 1;
-  uint32 responsecode = 2;
+  uint32 responseCode = 2;
   int64 timestamp = 3;
   bytes data = 4;
 }
@@ -13,5 +13,27 @@ message Response {
 // 초기화 후 바로 보내줘야하는 Response
 message InitialResponse {
   string userId = 1;   // 사용자 ID
-  string gameId = 2;   // 게임 세션 ID
+}
+
+// 클라이언트에서 게임 생성 버튼을 눌렀을 때 받을 Response
+message CreateGameResponse {
+  string gameId = 1;
+  string message = 2;
+}
+
+// 클라이언트에서 게임 리스트를 불러올 때 받는 Response
+message GetGameListResponse {
+  repeated GameInfo games = 1;
+  
+  message GameInfo {
+    string gameId = 1;
+    int32 playerCount = 2;
+    string gameState = 3;
+  }
+}
+
+// 게임에 참가했을 때 받을 Response
+message JoinGameResponse {
+  bool success = 1;
+  string message = 2;
 }

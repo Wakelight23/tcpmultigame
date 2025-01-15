@@ -1,42 +1,19 @@
 import User from '../classes/models/user.class.js';
-import { getGameSeesion, removeGameSession } from './game.session.js';
+import { findUserByDeviceId } from '../db/user/user.db.js';
+import { getGameSession, removeGameSession } from './game.session.js';
 import { userSessions } from './sessions.js';
 
 export const addUser = (socket, uuid) => {
-  console.log(`Adding user with ID: ${uuid}`);
   const user = new User(uuid, socket);
+  console.log('addUser의 user : ', user);
   userSessions.push(user);
-  console.log(
-    'Current user sessions:',
-    userSessions.map((u) => u.id),
-  );
   return user;
 };
 
 export const removeUser = (socket) => {
   const index = userSessions.findIndex((user) => user.socket === socket);
-  let removedUser = null;
-
   if (index !== -1) {
-    removedUser = userSessions.splice(index, 1)[0];
-    console.log(`Removed user from userSessions: ${removedUser.id}`);
-  } else {
-    console.warn('User not found in userSessions.');
-  }
-
-  // 관련된 gameSession에서 유저 제거
-  if (removedUser && removedUser.gameId) {
-    const gameSession = getGameSeesion(removedUser.gameId);
-    if (gameSession) {
-      gameSession.removeUser(removedUser.id);
-      console.log(`Removed user ${removedUser.id} from game session ${gameSession.id}`);
-
-      // 게임 세션이 비어 있으면 삭제
-      if (gameSession.users.length === 0) {
-        console.log(`Game session ${gameSession.id} is empty. Deleting session.`);
-        removeGameSession(gameSession.id);
-      }
-    }
+    return userSessions.splice(index, 1)[0];
   }
 };
 
@@ -49,12 +26,29 @@ export const getNextSequence = (id) => {
   return null;
 };
 
-export const getUserById = (id) => {
-  const user = userSessions.find((user) => user.id === id);
-  if (!user) {
-    console.error(`유저를 찾을 수 없습니다: User ID = ${id}`);
+export const getUserById = async (deviceId) => {
+  // console.log('getUserById의 id : ', id);
+  // console.log('getUserById에서 userSeesions : ', userSessions);
+  try {
+    // 1. deviceId로 DB에서 실제 userId 조회
+    const dbUser = await findUserByDeviceId(deviceId);
+    if (!dbUser) {
+      console.error(`DB에서 유저를 찾을 수 없습니다: Device ID = ${deviceId}`);
+      return null;
+    }
+
+    // 2. 실제 userId로 세션에서 유저 찾기
+    const user = userSessions.find((user) => user.id === dbUser.id);
+    if (!user) {
+      console.error(`세션에서 유저를 찾을 수 없습니다: User ID = ${dbUser.id}`);
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    console.error(`유저 조회 중 오류 발생: ${error.message}`);
+    return null;
   }
-  return user;
 };
 
 export const getUserBySocket = (socket) => {

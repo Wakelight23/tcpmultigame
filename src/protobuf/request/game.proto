@@ -2,28 +2,21 @@ syntax = "proto3";
 
 package game;
 
+message CreateGameRequest {
+  int64 timestamp = 1;
+}
+
+message GetGameListRequest {
+  int64 timestamp = 1;
+}
+
+message JoinGameRequest {
+  string gameId = 1;
+  int64 timestamp = 2;
+}
+
 message LocationUpdatePayload {
   string gameId = 1; // game 세션의 ID
   float x = 2; // X 좌표
   float y = 3; // Y 좌표
-}
-
-message LocationUpdate {
-  repeated UserLocation users = 1; // 사용자 위치 목록
-
-  message UserLocation {
-    string id = 1;       // 사용자 ID
-    uint32 playerId = 2; // 플레이어 ID
-    float x = 3;         // X 좌표
-    float y = 4;         // Y 좌표
-  }
-}
-
-message CreateGamePayload {
-  int64 timestamp = 1;
-}
-
-message JoinGamePayload {
-  string gameId = 1;
-  int64 timestamp = 2;
 }

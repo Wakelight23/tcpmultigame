@@ -73,7 +73,7 @@ export const onData = (socket) => async (data) => {
             break;
           }
           case PACKET_TYPE.EXIT: {
-            console.log('클라이언트 접속 종료');
+            console.log('take EXIT! 클라이언트 접속 종료');
             gameExitHandler({ socket, userId });
             break;
           }

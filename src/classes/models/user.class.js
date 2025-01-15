@@ -7,7 +7,6 @@ class User {
     // 유저가 움직이는 위치 동기화를 서버에서 처리하기 위해 객체 처리
     this.x = 0;
     this.y = 0;
-    this.sequence = 0;
     this.lastUpdateTime = Date.now();
   }
 
@@ -44,7 +43,7 @@ class User {
 
     return {
       x: this.x + distance,
-      y: this.y,
+      y: this.y + distance,
     };
   }
 }

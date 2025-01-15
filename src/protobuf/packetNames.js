@@ -1,22 +1,31 @@
 export const packetNames = {
   common: {
-    CommonPacket: 'commonPacket.CommonPacket', // common.proto의 CommonPacket 메시지
+    // common.proto
+    CommonPacket: 'commonPacket.CommonPacket',
     Ping: 'commonPacket.Ping',
   },
   initial: {
-    InitialPayload: 'initial.InitialPayload', // initialPayload.proto의 InitialPayload 메시지
+    // initial.proto
+    InitialPayload: 'initial.InitialPayload',
   },
   game: {
-    CreateGamePayload: 'game.CreateGamePayload',
-    JoinGamePayload: 'game.JoinGamePayload',
-    LocationUpdatePayload: 'game.LocationUpdatePayload', // game.proto의 LocationUpdatePayload 메시지
+    // game.proto
+    CreateGameRequest: 'game.CreateGameRequest',
+    GetGameListRequest: 'game.GetGameListRequest',
+    JoinGameRequest: 'game.JoinGameRequest',
+    LocationUpdatePayload: 'game.LocationUpdatePayload',
   },
   response: {
+    // response.proto
     InitialResponse: 'response.InitialResponse',
-    Response: 'response.Response', // response.proto의 Response 메시지
+    Response: 'response.Response',
+    CreateGameResponse: 'response.CreateGameResponse',
+    GetGameListResponse: 'response.GetGameListResponse',
+    JoinGameResponse: 'response.JoinGameResponse',
   },
   gameNotification: {
     // game.Notification.proto
+    Start: 'gameNotification.Start',
     LocationUpdate: 'gameNotification.LocationUpdate',
     ExitPayload: 'gameNotification.ExitPayload',
   },

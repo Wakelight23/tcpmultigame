@@ -6,19 +6,24 @@ import createGameHandler from './game/createGame.handler.js';
 import joinGameHandler from './game/joinGame.handler.js';
 import updateLocationHandler from './game/updateLocation.handler.js';
 import gameExitHandler from './game/gameExit.handler.js';
+import getGameListHandler from './game/getGameList.handler.js';
 
 const handlers = {
   [HANDLER_IDS.INITIAL]: {
     handler: initialHandler,
     protoType: 'initial.InitialPayload',
   },
+  [HANDLER_IDS.GET_GAMELIST]: {
+    handler: getGameListHandler,
+    protoType: 'response.GetGameListResponse',
+  },
   [HANDLER_IDS.CREATE_GAME]: {
     handler: createGameHandler,
-    protoType: 'game.CreateGamePayload',
+    protoType: 'game.CreateGameRequest',
   },
   [HANDLER_IDS.JOIN_GAME]: {
     handler: joinGameHandler,
-    protoType: 'game.JoinGamePayload',
+    protoType: 'game.JoinGameRequest',
   },
   [HANDLER_IDS.UPDATE_LOCATION]: {
     handler: updateLocationHandler,

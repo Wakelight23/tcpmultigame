@@ -11,7 +11,7 @@ export const createResponse = (handlerId, responseCode, data = null, userId) => 
     handlerId,
     responseCode,
     timestamp: Date.now(),
-    data: data ? Buffer.from(JSON.stringify(data)) : null,
+    data: data,
   };
 
   const buffer = Response.encode(responsePayload).finish();
