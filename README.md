@@ -11,6 +11,9 @@
 
 ### 서버 ↔ 클라이언트 구조
 
+![스크린샷 2025-01-17 111025](https://github.com/user-attachments/assets/0279918a-fe76-4360-b5c6-2e467c53c5df)
+
+
 ### 파일 디렉토리
 
 <details>
