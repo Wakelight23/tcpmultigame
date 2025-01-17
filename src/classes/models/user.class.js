@@ -7,7 +7,16 @@ class User {
     // 유저가 움직이는 위치 동기화를 서버에서 처리하기 위해 객체 처리
     this.x = 0;
     this.y = 0;
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.accelerationX = 0;
+    this.accelerationY = 0;
     this.lastUpdateTime = Date.now();
+    this.gameId = null; // gameId 초기화
+  }
+
+  setGameId(gameId) {
+    this.gameId = gameId;
   }
 
   updatePosition(x, y) {
@@ -35,16 +44,22 @@ class User {
   }
 
   // 위치 계산
-  // 이 게임에 접속한 유저 중 가장 높은 latency를 가진 유저를 기준으로 위치 계산
-  calculatePosition(latancy) {
-    const timeDiff = latancy / 1000; // 초 단위로 계산한다
-    const speed = 1; // 거, 속, 시 공식에서 speed는 1로 고정 => 속도가 달라지면 계산 방식이 복잡해진다
-    const distance = speed * timeDiff; // 속도 * 레이턴시 = 거리
+  calculatePosition(currentTime) {
+    const timeDiff = (currentTime - this.lastUpdateTime) / 1000;
 
-    return {
-      x: this.x + distance,
-      y: this.y + distance,
-    };
+    // 입력이 있을 때만 속도 적용
+    if (this.velocityX !== 0 || this.velocityY !== 0) {
+      // 절대 좌표 기반 위치 계산
+      this.x += this.velocityX * timeDiff;
+      this.y += this.velocityY * timeDiff;
+
+      // 입력이 끝나면 속도 초기화
+      this.velocityX = 0;
+      this.velocityY = 0;
+    }
+
+    this.lastUpdateTime = currentTime;
+    return { x: this.x, y: this.y };
   }
 }
 

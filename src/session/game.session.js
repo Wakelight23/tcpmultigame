@@ -30,15 +30,3 @@ export const getAvailableGameSession = () => {
   return gameSessions.find((session) => session.state === 'waiting');
 };
 
-// 서버 시작 시 기본 게임 세션 생성
-export const initializeGameSessions = () => {
-  if (gameSessions.length === 0) {
-    console.log('No game sessions found. Creating the first game session.');
-    addGameSession(generateUniqueId());
-  }
-};
-
-// 고유 ID 생성 함수
-const generateUniqueId = () => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};

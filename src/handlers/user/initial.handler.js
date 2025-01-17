@@ -6,6 +6,7 @@ import { createUser, findUserByDeviceId, updateUserLogin } from '../../db/user/u
 import { getAvailableGameSession } from '../../session/game.session.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
 
 const initialHandler = async ({ socket, userId, payload }) => {
   console.log('initialHandler 함수 들어왔다!');
@@ -36,7 +37,7 @@ const initialHandler = async ({ socket, userId, payload }) => {
 
     // 세션에 유저 추가
     addUser(socket, user.id);
-    console.log(`유저 추가됨: User ID = ${user.id}`);
+    console.log(`userSession에 추가됨: User ID = ${user.id}`);
 
     const protoMessages = getProtoMessages();
     const InitialResponse = protoMessages.response.InitialResponse;

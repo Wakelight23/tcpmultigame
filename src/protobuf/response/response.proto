@@ -34,6 +34,14 @@ message GetGameListResponse {
 
 // 게임에 참가했을 때 받을 Response
 message JoinGameResponse {
-  bool success = 1;
-  string message = 2;
+  string gameId = 1;
+  int32 playerCount = 2;
+  string gameState = 3;
+  string message = 4;
+}
+
+message WaitingGameResponse {
+  string gameId = 1;
+  int32 playerCount = 2;
+  string gameState = 3;
 }

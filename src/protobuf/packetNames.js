@@ -13,6 +13,7 @@ export const packetNames = {
     CreateGameRequest: 'game.CreateGameRequest',
     GetGameListRequest: 'game.GetGameListRequest',
     JoinGameRequest: 'game.JoinGameRequest',
+    WaitingGameRequest: 'game.WaitingGameRequest',
     LocationUpdatePayload: 'game.LocationUpdatePayload',
   },
   response: {
@@ -22,10 +23,12 @@ export const packetNames = {
     CreateGameResponse: 'response.CreateGameResponse',
     GetGameListResponse: 'response.GetGameListResponse',
     JoinGameResponse: 'response.JoinGameResponse',
+    WaitingGameResponse: 'response.WaitingGameResponse',
   },
   gameNotification: {
     // game.Notification.proto
     Start: 'gameNotification.Start',
+    Waiting: 'gameNotification.Waiting',
     LocationUpdate: 'gameNotification.LocationUpdate',
     ExitPayload: 'gameNotification.ExitPayload',
   },

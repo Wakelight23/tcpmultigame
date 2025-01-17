@@ -12,7 +12,7 @@ const gameExitHandler = ({ socket, userId }) => {
 
     const gameId = user.gameId;
     if (!gameId) {
-      console.warn(`User ${userId} is not associated with any game.`);
+      console.warn(`${userId} 가 게임 세션에 존재하지 않습니다.`);
       return;
     }
 

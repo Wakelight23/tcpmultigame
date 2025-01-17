@@ -5,7 +5,6 @@ import { userSessions } from './sessions.js';
 
 export const addUser = (socket, uuid) => {
   const user = new User(uuid, socket);
-  console.log('addUser의 user : ', user);
   userSessions.push(user);
   return user;
 };
@@ -27,8 +26,6 @@ export const getNextSequence = (id) => {
 };
 
 export const getUserById = async (deviceId) => {
-  // console.log('getUserById의 id : ', id);
-  // console.log('getUserById에서 userSeesions : ', userSessions);
   try {
     // 1. deviceId로 DB에서 실제 userId 조회
     const dbUser = await findUserByDeviceId(deviceId);

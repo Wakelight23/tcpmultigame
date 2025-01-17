@@ -1,4 +1,4 @@
-import { CLIENT_VERSION, HOST, PORT } from '../constants/env.js';
+import { CLIENT_VERSION, HOST, MAX_PALYERS, PORT } from '../constants/env.js';
 import {
   DB1_NAME,
   DB1_USER,
@@ -14,6 +14,9 @@ import {
 import { PACKET_TYPE_LENGTH, TOTAL_LENGTH } from '../constants/header.js';
 
 export const config = {
+  maxPlayer: {
+    max_player: MAX_PALYERS,
+  },
   server: {
     port: PORT,
     host: HOST,
@@ -24,6 +27,11 @@ export const config = {
   packet: {
     totalLength: TOTAL_LENGTH,
     typeLength: PACKET_TYPE_LENGTH,
+  },
+  intervals: {
+    gameStart: 3000, // 게임 시작 알림 인터벌 (1초)
+    locationUpdate: 100, // 위치 업데이트 인터벌 (100ms)
+    ping: 5000, // 핑 체크 인터벌 (5초)
   },
   database: {
     GAME_DB: {

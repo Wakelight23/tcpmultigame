@@ -12,7 +12,7 @@ export const packetParser = (data) => {
   let packet;
   try {
     packet = CommonPacket.decode(data);
-    console.log('Decoded Packet:', packet);
+    // console.log('Decoded Packet:', packet);
   } catch (e) {
     console.error('Packet decode error:', e);
     throw new CustomError(ErrorCodes.PACKET_DECODE_ERROR, '패킷 디코딩에 실패하였습니다.');
@@ -49,7 +49,7 @@ export const packetParser = (data) => {
     }
 
     const payload = PayloadType.decode(payloadBuffer);
-    console.log('Decoded payload:', payload);
+    // console.log('Decoded payload:', payload);
 
     // 필드 검증
     const errorMessage = PayloadType.verify(payload);

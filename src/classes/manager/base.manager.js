@@ -2,16 +2,15 @@
 class BaseManager {
   constructor() {
     if (new.target === BaseManager) {
-      throw new TypeError('Cannot Construct BaseManager instances');
+      throw new TypeError('Cannot construct BaseManager instances directly');
     }
   }
 
-  // ...args = overriding
   addPlayer(playerId, ...args) {
     throw new Error('Method not implemented');
   }
 
-  removePlayer() {
+  removePlayer(playerId) {
     throw new Error('Method not implemented');
   }
 

@@ -1,20 +1,19 @@
 import { handleError } from '../../utils/error/errorHandler.js';
-import { getGameSession } from '../../session/game.session.js';
+import { getAllGameSession, getGameSession } from '../../session/game.session.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { HANDLER_IDS, RESPONSE_SUCCESS_CODE } from '../../constants/handlerIds.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 
 const getGameListHandler = ({ socket, userId, payload }) => {
   try {
-    const gameSessions = getGameSession(payload.gameId);
+    console.log('getGameListHandler 들어옴');
+    const gameSessions = getAllGameSession();
     const protoMessages = getProtoMessages();
     const GetGameListResponse = protoMessages.response.GetGameListResponse;
 
-    const gameList = gameSessions.map((session) => ({
-      gameId: session.id,
-      playerCount: session.users.length,
-      gameState: session.state,
-    }));
+    const gameList = Array.isArray(gameSessions)
+      ? gameSessions.map((session) => session.getSessionInfo())
+      : [];
 
     const responseData = GetGameListResponse.create({
       games: gameList,

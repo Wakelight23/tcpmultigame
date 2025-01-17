@@ -7,6 +7,13 @@ import CustomError from '../utils/error/customError.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import gameExitHandler from '../handlers/game/gameExit.handler.js';
+import IntervalManager from '../classes/manager/interval.manager.js';
+import {
+  createLocationPacket,
+  createPingPacket,
+  createWaitingPacket,
+  gameStartNotification,
+} from '../utils/notification/game.notification.js';
 
 export const onData = (socket) => async (data) => {
   // 기존 버퍼에 새로 수신된 데이터를 추가
@@ -28,55 +35,37 @@ export const onData = (socket) => async (data) => {
       socket.buffer = socket.buffer.slice(length);
 
       try {
-        // 공통 패킷 구조를 파싱
         const { handlerId, userId, payload } = packetParser(packet);
-
-        console.log('Decoded Packet:', { handlerId, userId, payload });
+        const intervalManager = new IntervalManager();
 
         switch (packetType) {
-          case PACKET_TYPE.NORMAL: {
-            const handler = getHandlerById(handlerId);
-            console.log('handler 뭐가 나오니? ', handler);
-            if (!handler) {
-              throw new CustomError(ErrorCodes.UNKNOWN_HANDLER_ID, '알 수 없는 핸들러 ID입니다.');
-            }
-
-            // 유저 세션 확인
-            // const user = getUserBySocket(socket);
-            // if (!user) {
-            //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-            // }
-
-            // 핸들러 호출
-            await handler({
-              socket,
-              userId,
-              payload,
-            });
+          case PACKET_TYPE.NORMAL:
+            await handleNormalPacket(handlerId, socket, userId, payload);
             break;
-          }
 
-          case PACKET_TYPE.PING: {
-            console.log('Ping received');
-            break; // Ping 처리 로직 추가 가능
-          }
+          case PACKET_TYPE.PING:
+            handlePingPacket(userId, socket, intervalManager);
+            break;
 
-          case PACKET_TYPE.LOCATION: {
-            console.log('Location Update received:', payload);
-            // 위치 업데이트 처리 로직 추가 가능
+          case PACKET_TYPE.WAITING:
+            handleWaitingPacket(payload, socket, intervalManager);
             break;
-          }
 
-          case PACKET_TYPE.GAME_START: {
-            console.log('Game Start received');
-            // 게임 시작 처리 로직 추가 가능
+          case PACKET_TYPE.JOIN_GAME:
+            handleGameStartPacket(payload, socket, intervalManager);
             break;
-          }
-          case PACKET_TYPE.EXIT: {
-            console.log('take EXIT! 클라이언트 접속 종료');
-            gameExitHandler({ socket, userId });
+
+          case PACKET_TYPE.GAME_START:
+            handleGameStartPacket(payload, socket, intervalManager);
             break;
-          }
+
+          case PACKET_TYPE.LOCATION:
+            handleLocationPacket(payload, socket, intervalManager);
+            break;
+
+          case PACKET_TYPE.EXIT:
+            handleExitPacket(userId, socket, intervalManager);
+            break;
 
           default:
             console.error(`Unknown packet type: ${packetType}`);
@@ -90,3 +79,54 @@ export const onData = (socket) => async (data) => {
     }
   }
 };
+
+async function handleNormalPacket(handlerId, socket, userId, payload) {
+  const handler = getHandlerById(handlerId);
+  if (!handler) {
+    throw new CustomError(ErrorCodes.UNKNOWN_HANDLER_ID, '알 수 없는 핸들러 ID입니다.');
+  }
+  await handler({ socket, userId, payload });
+}
+
+function handlePingPacket(userId, socket, intervalManager) {
+  console.log('Ping received');
+  intervalManager.addPingCheck(userId, () => {
+    const pingPacket = createPingPacket(Date.now());
+    socket.write(pingPacket);
+  });
+}
+
+function handleLocationPacket(payload, socket, intervalManager) {
+  console.log('Location Update received:', payload);
+  intervalManager.addLocationUpdate(payload.users[0].id, () => {
+    const locationPacket = createLocationPacket(payload.users);
+    socket.write(locationPacket);
+  });
+}
+
+function handleWaitingPacket(payload, socket) {
+  console.log('Waiting packet received:', payload);
+  const { gameId, playerCount, gameState } = payload;
+
+  // 게임 상태 업데이트
+  updateGameState(gameId, playerCount, gameState);
+
+  // 클라이언트에게 대기 상태 알림
+  const waitingPacket = createWaitingPacket(gameId, playerCount, gameState);
+  socket.write(waitingPacket);
+}
+
+function handleGameStartPacket(payload, socket, intervalManager) {
+  console.log('Game Start Notification received');
+  const timestamp = Date.now();
+  intervalManager.addGameStartNotification(payload.gameId, () => {
+    const startPacket = gameStartNotification(payload.gameId, timestamp);
+    socket.write(startPacket);
+  });
+}
+
+function handleExitPacket(userId, socket, intervalManager) {
+  console.log('take EXIT! 클라이언트 접속 종료');
+  intervalManager.removePlayer(userId);
+  gameExitHandler({ socket, userId });
+}

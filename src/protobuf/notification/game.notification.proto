@@ -12,10 +12,16 @@ message LocationUpdate {
 
   message UserLocation {
     string id = 1;       // 사용자 ID
-    uint32 playerId = 2; // 플레이어 ID
+    int32 playerId = 2; // 플레이어 ID
     float x = 3;         // X 좌표
     float y = 4;         // Y 좌표
   }
+}
+
+message Waiting {
+  string gameId = 1;
+  int32 playerCount = 2;
+  string gameState = 3;
 }
 
 message Start {
