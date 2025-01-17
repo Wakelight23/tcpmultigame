@@ -14,6 +14,10 @@
 ![스크린샷 2025-01-17 111025](https://github.com/user-attachments/assets/0279918a-fe76-4360-b5c6-2e467c53c5df)
 
 
+### 게임 테스트 파일
+
+![Unity Game Test File](https://drive.google.com/file/d/1lHfegjkFzZ4Na7-hHUUg3hC2S0w1Kc-p/view?usp=sharing)
+
 ### 파일 디렉토리
 
 <details>
