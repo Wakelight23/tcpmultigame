@@ -16,7 +16,7 @@
 
 ### 게임 테스트 파일
 
-![Unity Game Test File](https://drive.google.com/file/d/1lHfegjkFzZ4Na7-hHUUg3hC2S0w1Kc-p/view?usp=sharing)
+[Unity Game Test File](https://drive.google.com/file/d/1lHfegjkFzZ4Na7-hHUUg3hC2S0w1Kc-p/view?usp=sharing)
 
 ### 파일 디렉토리
 
