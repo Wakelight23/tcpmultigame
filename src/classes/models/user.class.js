@@ -30,35 +30,46 @@ class User {
   }
 
   ping() {
-    const now = Date.now();
-
-    console.log(`[${this.id}] ping`);
-
-    this.socket.write(createPingPacket(now));
+    const pingData = {
+      timestamp: Date.now(),
+    };
+    this.lastPingSent = pingData;
+    this.socket.write(createPingPacket(pingData));
   }
 
   handlePong(data) {
     const now = Date.now();
-    this.latency = (now - data.timestamp) / 2; // 왜 나누기 2? 갔다가 오니까 = 왕복
+    this.latency = Math.max(0, (now - data.timestamp) / 2);
+    this.lastPongTime = now; // 마지막 pong 시간 저장
     console.log(`Received pong from user ${this.id} at ${now} with latency ${this.latency}ms`);
   }
 
   // 위치 계산
   calculatePosition(currentTime) {
+    if (!currentTime) {
+      currentTime = Date.now();
+    }
     const timeDiff = (currentTime - this.lastUpdateTime) / 1000;
 
-    // 입력이 있을 때만 속도 적용
-    if (this.velocityX !== 0 || this.velocityY !== 0) {
-      // 절대 좌표 기반 위치 계산
-      this.x += this.velocityX * timeDiff;
-      this.y += this.velocityY * timeDiff;
+    // 가속도를 속도에 적용
+    this.velocityX += this.accelerationX * timeDiff;
+    this.velocityY += this.accelerationY * timeDiff;
 
-      // 입력이 끝나면 속도 초기화
-      this.velocityX = 0;
-      this.velocityY = 0;
-    }
+    // 속도 제한 (예: -5 ~ 5 사이로 제한)
+    this.velocityX = Math.max(-5, Math.min(this.velocityX, 5));
+    this.velocityY = Math.max(-5, Math.min(this.velocityY, 5));
 
+    // 새로운 위치 계산
+    this.x += this.velocityX * timeDiff;
+    this.y += this.velocityY * timeDiff;
+
+    // 마지막 업데이트 시간 갱신
     this.lastUpdateTime = currentTime;
+
+    // 가속도 초기화 (한 번의 입력만 처리)
+    this.accelerationX = 0;
+    this.accelerationY = 0;
+
     return { x: this.x, y: this.y };
   }
 }

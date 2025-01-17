@@ -50,7 +50,7 @@ export const getUserById = async (deviceId) => {
 
 export const getUserBySocket = (socket) => {
   const user = userSessions.find((user) => user.socket === socket);
-  console.log(`user : ${user}`);
+  console.log(`user : ${user.socket}`);
   if (!user) {
     console.error('유저를 찾을 수 없습니다: 소켓 정보 기반');
   }

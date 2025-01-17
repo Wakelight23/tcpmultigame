@@ -19,6 +19,11 @@ const joinGameHandler = async ({ socket, userId }) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
     }
 
+    if (user.gameId) {
+      console.warn(`유저가 이미 게임에 참가 중: Game ID = ${user.gameId}`);
+      return;
+    }
+
     let gameSession = getAvailableGameSession();
     if (!gameSession) {
       // 사용 가능한 게임 세션이 없으면 새로운 세션 생성

@@ -90,14 +90,35 @@ async function handleNormalPacket(handlerId, socket, userId, payload) {
 
 function handlePingPacket(userId, socket, intervalManager) {
   console.log('Ping received');
-  intervalManager.addPingCheck(userId, () => {
-    const pingPacket = createPingPacket(Date.now());
-    socket.write(pingPacket);
-  });
+  const user = getUserBySocket(socket);
+  if (!user) return;
+
+  // pong 응답 처리
+  const pongData = {
+    timestamp: Date.now(),
+  };
+
+  // user의 handlePong 메서드 호출
+  user.handlePong(pongData);
+
+  // ping 체크 인터벌 설정
+  // intervalManager.addPingCheck(userId, () => {
+  //   const pingPacket = createPingPacket(Date.now());
+  //   socket.write(pingPacket);
+  // });
 }
 
 function handleLocationPacket(payload, socket, intervalManager) {
   console.log('Location Update received:', payload);
+
+  // 위치 데이터 유효성 검사 추가
+  payload.users.forEach((user) => {
+    if (isNaN(user.x) || isNaN(user.y)) {
+      console.error(`Invalid location data for user ${user.id}`);
+      return;
+    }
+  });
+
   intervalManager.addLocationUpdate(payload.users[0].id, () => {
     const locationPacket = createLocationPacket(payload.users);
     socket.write(locationPacket);

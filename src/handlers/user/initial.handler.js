@@ -1,4 +1,4 @@
-import { addUser } from '../../session/user.session.js';
+import { addUser, getUserBySocket } from '../../session/user.session.js';
 import { HANDLER_IDS, RESPONSE_SUCCESS_CODE } from '../../constants/handlerIds.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { handleError } from '../../utils/error/errorHandler.js';
@@ -7,26 +7,16 @@ import { getAvailableGameSession } from '../../session/game.session.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { userSessions } from '../../session/sessions.js';
 
 const initialHandler = async ({ socket, userId, payload }) => {
   console.log('initialHandler 함수 들어왔다!');
   try {
     const { deviceId } = payload;
 
-    const user = await findUserByDeviceId(payload.deviceId);
-    if (!user) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-    }
+    // 1. 데이터베이스에서 유저 검색
+    let user = await findUserByDeviceId(deviceId);
 
-    if (!user) {
-      user = await createUser(deviceId);
-    } else {
-      await updateUserLogin(user.id);
-    }
-
-    addUser(socket, user.id);
-
-    // 유저가 없으면 새로 생성
     if (!user) {
       console.log(`새로운 유저 생성: Device ID = ${deviceId}`);
       user = await createUser(deviceId);
@@ -35,7 +25,17 @@ const initialHandler = async ({ socket, userId, payload }) => {
       await updateUserLogin(user.id);
     }
 
-    // 세션에 유저 추가
+    // 2. 세션에서 동일한 소켓 또는 deviceId 확인
+    const existingUser = userSessions.find(
+      (sessionUser) => sessionUser.socket === socket || sessionUser.id === user.id,
+    );
+
+    if (existingUser) {
+      console.warn(`유저가 이미 세션에 존재합니다: User ID = ${existingUser.id}`);
+      return;
+    }
+
+    // 3. 새로운 유저를 세션에 추가
     addUser(socket, user.id);
     console.log(`userSession에 추가됨: User ID = ${user.id}`);
 
@@ -44,7 +44,6 @@ const initialHandler = async ({ socket, userId, payload }) => {
 
     const initialResponseData = InitialResponse.create({
       userId: user.id,
-      // gameId: gameSession.id,
     });
 
     // 클라이언트에게 응답 전송

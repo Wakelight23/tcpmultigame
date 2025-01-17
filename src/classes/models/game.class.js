@@ -15,6 +15,12 @@ class Game {
   }
 
   addUser(user) {
+    user.x = 0;
+    user.y = 0;
+    user.velocityX = 0;
+    user.velocityY = 0;
+    user.accelerationX = 0;
+    user.accelerationY = 0;
     // 최대 참가 인원수 설정
     if (this.users.length >= config.maxPlayer.max_player) {
       throw new Error(`Game session is full`);
@@ -121,14 +127,20 @@ class Game {
         user.socket.write(startPacket);
       }
     });
+    setInterval(() => {
+      this.users.forEach((user) => {
+        user.ping();
+      });
+    }, 1000);
   }
 
   getAllLocation() {
-    const maxLatancy = this.getMaxLatency();
-    console.log('maxLatancy check : ', maxLatancy);
+    const currentTime = Date.now(); // 현재 시간 사용
+    const maxLatency = this.getMaxLatency();
+    const syncTime = currentTime - maxLatency; // 동기화 시점 계산
 
     const locationData = this.users.map((user) => {
-      const { x, y } = user.calculatePosition(maxLatancy);
+      const { x, y } = user.calculatePosition(syncTime);
       return { id: user.id, x, y };
     });
     // console.log('getAllLocation의 locationData : ', locationData);
